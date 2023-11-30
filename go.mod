@@ -1,4 +1,4 @@
-module simplebank
+module github.com/fayca121/simplebank
 
 go 1.21
 

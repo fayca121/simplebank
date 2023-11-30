@@ -39,6 +39,12 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
 
+      - name: Install Task
+        uses: arduino/setup-task@v1
+        with:
+          version: 3.32.0
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Run migrations
         run: task migrateup
 

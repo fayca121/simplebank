@@ -16,10 +16,11 @@ jobs:
 
     services:
       postgres:
-        image: bitnami/postgresql:14.1.0
+        image: postgres:14.10
         env:
-          POSTGRESQL_PASSWORD: postgres
-          POSTGRESQL_DATABASE: simple_bank
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: rocks
+          POSTGRES_DB: simple_bank
         ports:
           - 5432:5432
         options: >-

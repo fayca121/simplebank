@@ -45,6 +45,12 @@ jobs:
           version: 3.32.0
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install migrate
+        run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.16.2/migrate.linux-amd64.deb | tar xvz
+          mv migrate /usr/bin/migrate
+          which migrate
+
       - name: Run migrations
         run: task migrateup
 

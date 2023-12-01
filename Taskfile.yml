@@ -55,3 +55,8 @@ tasks:
     desc: "Migrate schema down"
     cmds:
       - migrate -path db/migration -database "{{.DB_URL}}" -verbose down
+
+  server:
+    desc: "Run the server"
+    cmds:
+      - go run main.go

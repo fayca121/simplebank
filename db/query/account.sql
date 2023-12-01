@@ -15,7 +15,7 @@ select * from accounts
 where id= $1 limit 1
 FOR NO KEY UPDATE;
 
--- name: GetAccounts :many
+-- name: ListAccounts :many
 select * from accounts
 order by id
 LIMIT $1

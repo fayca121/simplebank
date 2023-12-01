@@ -60,3 +60,8 @@ tasks:
     desc: "Run the server"
     cmds:
       - go run main.go
+
+  mock:
+    desc: "Generate mock interface"
+    cmds:
+      - mockgen -package mockdb -destination db/mock/store.go github.com/fayca121/simplebank/db/sqlc Store

@@ -5,6 +5,7 @@ import (
 	"github.com/fayca121/simplebank/util"
 	_ "github.com/lib/pq"
 	"log"
+	"os"
 	"testing"
 )
 
@@ -26,5 +27,5 @@ func TestMain(m *testing.M) {
 		log.Fatal("cannot connect to db:", err)
 	}
 	testQueries = New(testDb)
-	m.Run()
+	os.Exit(m.Run())
 }

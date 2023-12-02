@@ -51,10 +51,20 @@ tasks:
     cmds:
       - migrate -path db/migration -database "{{.DB_URL}}" -verbose up
 
+  migrateup1:
+    desc: "Migrate schema up"
+    cmds:
+      - migrate -path db/migration -database "{{.DB_URL}}" -verbose up 1
+
   migratedown:
     desc: "Migrate schema down"
     cmds:
       - migrate -path db/migration -database "{{.DB_URL}}" -verbose down
+
+  migratedown1:
+    desc: "Migrate schema down"
+    cmds:
+      - migrate -path db/migration -database "{{.DB_URL}}" -verbose down 1
 
   server:
     desc: "Run the server"

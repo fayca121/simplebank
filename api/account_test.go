@@ -103,13 +103,13 @@ func TestCreateAccountAPI(t *testing.T) {
 	account := randomAccount()
 	testCases := []struct {
 		Name          string
-		Req           createAccountRequest
+		Req           *createAccountRequest
 		buildStub     func(store *mockdb.MockStore)
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
 		{
 			Name: "OK",
-			Req: createAccountRequest{
+			Req: &createAccountRequest{
 				Owner:    account.Owner,
 				Currency: account.Currency,
 			},
@@ -128,7 +128,7 @@ func TestCreateAccountAPI(t *testing.T) {
 		},
 		{
 			Name: "InternalError",
-			Req: createAccountRequest{
+			Req: &createAccountRequest{
 				Owner:    account.Owner,
 				Currency: account.Currency,
 			},
@@ -146,7 +146,7 @@ func TestCreateAccountAPI(t *testing.T) {
 		},
 		{
 			Name: "InvalidBodyRequest",
-			Req: createAccountRequest{
+			Req: &createAccountRequest{
 				Owner:    account.Owner,
 				Currency: "DA",
 			},
@@ -169,7 +169,7 @@ func TestCreateAccountAPI(t *testing.T) {
 			// start test server and send request
 			server := NewServer(store)
 			recorder := httptest.NewRecorder()
-			body, err := json.Marshal(&tc.Req)
+			body, err := json.Marshal(tc.Req)
 			require.NoError(t, err)
 			request, err := http.NewRequest(http.MethodPost, "/accounts", bytes.NewReader(body))
 			require.NoError(t, err)

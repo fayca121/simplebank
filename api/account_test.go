@@ -102,22 +102,24 @@ func TestGetAccountAPI(t *testing.T) {
 func TestCreateAccountAPI(t *testing.T) {
 	account := randomAccount()
 	testCases := []struct {
-		Name          string
-		Req           *createAccountRequest
+		name          string
+		request       *createAccountRequest
 		buildStub     func(store *mockdb.MockStore)
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
 		{
-			Name: "OK",
-			Req: &createAccountRequest{
+			name: "OK",
+			request: &createAccountRequest{
 				Owner:    account.Owner,
 				Currency: account.Currency,
 			},
 			buildStub: func(store *mockdb.MockStore) {
-				store.EXPECT().CreateAccount(gomock.Any(), gomock.Eq(db.CreateAccountParams{
+				arg := db.CreateAccountParams{
 					Owner:    account.Owner,
+					Balance:  0,
 					Currency: account.Currency,
-				})).
+				}
+				store.EXPECT().CreateAccount(gomock.Any(), gomock.Eq(arg)).
 					Times(1).
 					Return(account, nil)
 			},
@@ -127,16 +129,19 @@ func TestCreateAccountAPI(t *testing.T) {
 			},
 		},
 		{
-			Name: "InternalError",
-			Req: &createAccountRequest{
+			name: "InternalError",
+			request: &createAccountRequest{
 				Owner:    account.Owner,
 				Currency: account.Currency,
 			},
 			buildStub: func(store *mockdb.MockStore) {
-				store.EXPECT().CreateAccount(gomock.Any(), gomock.Eq(db.CreateAccountParams{
+				arg := db.CreateAccountParams{
 					Owner:    account.Owner,
+					Balance:  0,
 					Currency: account.Currency,
-				})).
+				}
+
+				store.EXPECT().CreateAccount(gomock.Any(), gomock.Eq(arg)).
 					Times(1).
 					Return(db.Account{}, sql.ErrConnDone)
 			},
@@ -145,8 +150,8 @@ func TestCreateAccountAPI(t *testing.T) {
 			},
 		},
 		{
-			Name: "InvalidBodyRequest",
-			Req: &createAccountRequest{
+			name: "InvalidBodyRequest",
+			request: &createAccountRequest{
 				Owner:    account.Owner,
 				Currency: "DA",
 			},
@@ -161,7 +166,7 @@ func TestCreateAccountAPI(t *testing.T) {
 
 	for i := range testCases {
 		tc := testCases[i]
-		t.Run(tc.Name, func(t *testing.T) {
+		t.Run(tc.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			store := mockdb.NewMockStore(ctrl)
@@ -169,7 +174,7 @@ func TestCreateAccountAPI(t *testing.T) {
 			// start test server and send request
 			server := NewServer(store)
 			recorder := httptest.NewRecorder()
-			body, err := json.Marshal(tc.Req)
+			body, err := json.Marshal(tc.request)
 			require.NoError(t, err)
 			request, err := http.NewRequest(http.MethodPost, "/accounts", bytes.NewReader(body))
 			require.NoError(t, err)

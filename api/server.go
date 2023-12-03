@@ -1,20 +1,31 @@
 package api
 
 import (
+	"fmt"
 	db "github.com/fayca121/simplebank/db/sqlc"
+	"github.com/fayca121/simplebank/token"
+	"github.com/fayca121/simplebank/util"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 )
 
 type Server struct {
-	store  db.Store
-	router *gin.Engine
+	config     util.Config
+	store      db.Store
+	tokenMaker token.Maker
+	router     *gin.Engine
 }
 
-func NewServer(store db.Store) *Server {
+func NewServer(config util.Config, store db.Store) (*Server, error) {
+	tokenMaker, err := token.NewJWTMaker(config.TokenSymmetricKey) // or token.NewPasetaMaker()
+	if err != nil {
+		return nil, fmt.Errorf("cannot create token maker")
+	}
 	server := &Server{
-		store: store,
+		config:     config,
+		store:      store,
+		tokenMaker: tokenMaker,
 	}
 	//add routes to router
 	router := gin.Default()
@@ -30,8 +41,9 @@ func NewServer(store db.Store) *Server {
 	router.DELETE("/accounts/:id", server.deleteAccount)
 	router.POST("/transfers", server.createTransfer)
 	router.POST("/users", server.createUser)
+	router.POST("/login", server.loginUser)
 	server.router = router
-	return server
+	return server, nil
 }
 
 func (server *Server) Start(address string) error {

@@ -33,15 +33,18 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		_ = v.RegisterValidation("currency", validCurrency)
 	}
+	accountGrp := router.Group("/accounts").Use(authMiddleware(tokenMaker))
+	{
+		accountGrp.POST("/", server.createAccount)
+		accountGrp.GET("/:id", server.getAccount)
+		accountGrp.GET("/", server.listAccount)
+		accountGrp.PUT("/", server.updateAccount)
+		accountGrp.DELETE("/:id", server.deleteAccount)
+	}
 
-	router.POST("/accounts", server.createAccount)
-	router.GET("/accounts/:id", server.getAccount)
-	router.GET("/accounts", server.listAccount)
-	router.PUT("/accounts", server.updateAccount)
-	router.DELETE("/accounts/:id", server.deleteAccount)
 	router.POST("/transfers", server.createTransfer)
 	router.POST("/users", server.createUser)
-	router.POST("/login", server.loginUser)
+	router.POST("/users/login", server.loginUser)
 	server.router = router
 	return server, nil
 }

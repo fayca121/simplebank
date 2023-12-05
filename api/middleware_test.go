@@ -22,8 +22,9 @@ func TestMiddleware(t *testing.T) {
 			name: "OK",
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				//generate token
-				generatedToken, err := tokenMaker.CreateToken(util.RandomOwner(), time.Minute)
+				generatedToken, payload, err := tokenMaker.CreateToken(util.RandomOwner(), time.Minute)
 				require.NoError(t, err)
+				require.NotEmpty(t, payload)
 				// create authorization header with Bearer token
 				authorizationHeader := fmt.Sprintf("%s %s", authorizationTypeBearer, generatedToken)
 				//put the header in request headers
@@ -45,9 +46,9 @@ func TestMiddleware(t *testing.T) {
 			name: "UnsupportedAuthorization",
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				//generate token
-				generatedToken, err := tokenMaker.CreateToken(util.RandomOwner(), time.Minute)
+				generatedToken, payload, err := tokenMaker.CreateToken(util.RandomOwner(), time.Minute)
 				require.NoError(t, err)
-
+				require.NotEmpty(t, payload)
 				//put the header in request headers
 				request.Header.Add(authorizationHeaderKey, generatedToken)
 			},
@@ -59,8 +60,9 @@ func TestMiddleware(t *testing.T) {
 			name: "ExpiredToken",
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				//generate token
-				generatedToken, err := tokenMaker.CreateToken(util.RandomOwner(), -time.Minute)
+				generatedToken, payload, err := tokenMaker.CreateToken(util.RandomOwner(), -time.Minute)
 				require.NoError(t, err)
+				require.NotEmpty(t, payload)
 				// create authorization header with Bearer token
 				authorizationHeader := fmt.Sprintf("%s %s", authorizationTypeBearer, generatedToken)
 				//put the header in request headers

@@ -15,10 +15,10 @@ func NewPasetoMaker() (*PasetoMaker, error) {
 	}, nil
 }
 
-func (p *PasetoMaker) CreateToken(username string, duration time.Duration) (string, error) {
+func (p *PasetoMaker) CreateToken(username string, duration time.Duration) (string, *Payload, error) {
 	payload, err := NewPayLoad(username, duration)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 
 	// create Token
@@ -30,10 +30,10 @@ func (p *PasetoMaker) CreateToken(username string, duration time.Duration) (stri
 	err = token.Set("ID", payload.ID)
 
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 	encrypted := token.V4Encrypt(p.symmetricKey, nil)
-	return encrypted, nil
+	return encrypted, payload, nil
 }
 
 func (p *PasetoMaker) VerifyToken(token string) (*Payload, error) {

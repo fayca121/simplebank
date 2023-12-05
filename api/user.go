@@ -3,7 +3,6 @@ package api
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	db "github.com/fayca121/simplebank/db/sqlc"
 	"github.com/fayca121/simplebank/util"
 	"github.com/gin-gonic/gin"
@@ -117,12 +116,19 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+	id, err := uuid.Parse(refreshTokenPayload.ID)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
 	session, err := server.store.CreateSession(ctx, db.CreateSessionParams{
-		ID:           uuid.New(),
+		ID:           id,
 		Username:     req.Username,
 		RefreshToken: refreshToken,
 		UserAgent:    ctx.Request.UserAgent(),
 		ClientIp:     ctx.ClientIP(),
+		IsBlocked:    false,
 		ExpiresAt:    refreshTokenPayload.ExpiredAt,
 	})
 
@@ -136,18 +142,6 @@ func (server *Server) loginUser(ctx *gin.Context) {
 			}
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-
-	if session.IsBlocked {
-		err := fmt.Errorf("the refresh token is blocked")
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
-		return
-	}
-
-	if session.ExpiresAt.Before(time.Now()) {
-		err := fmt.Errorf("the refresh token has expired")
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 

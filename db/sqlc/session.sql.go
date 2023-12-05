@@ -14,9 +14,9 @@ import (
 
 const createSession = `-- name: CreateSession :one
 insert into sessions (
-    id, username, refresh_token, user_agent, client_ip, expires_at
+    id, username, refresh_token, user_agent, client_ip, is_blocked, expires_at
 ) VALUES (
-             $1,$2,$3,$4,$5,$6
+             $1,$2,$3,$4,$5,$6,$7
          )
 returning id, username, refresh_token, user_agent, client_ip, is_blocked, expires_at, created_at
 `
@@ -27,6 +27,7 @@ type CreateSessionParams struct {
 	RefreshToken string    `json:"refresh_token"`
 	UserAgent    string    `json:"user_agent"`
 	ClientIp     string    `json:"client_ip"`
+	IsBlocked    bool      `json:"is_blocked"`
 	ExpiresAt    time.Time `json:"expires_at"`
 }
 
@@ -37,6 +38,7 @@ func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (S
 		arg.RefreshToken,
 		arg.UserAgent,
 		arg.ClientIp,
+		arg.IsBlocked,
 		arg.ExpiresAt,
 	)
 	var i Session

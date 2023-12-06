@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// ------------------ Create Account ------------------------
+// ------------------ Create User ------------------------
 type createUserRequest struct {
 	Username string `json:"username" binding:"required,alphanum"`
 	Password string `json:"password" binding:"required,min=6"`
@@ -69,6 +69,7 @@ func (server *Server) createUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, response)
 }
 
+// ------------------ Login User ------------------------
 type loginUserRequest struct {
 	Username string `json:"username" binding:"required,alphanum"`
 	Password string `json:"password" binding:"required,min=6"`

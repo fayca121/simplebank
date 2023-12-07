@@ -3,12 +3,16 @@ package main
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"github.com/fayca121/simplebank/api"
 	db "github.com/fayca121/simplebank/db/sqlc"
 	_ "github.com/fayca121/simplebank/doc/statik"
 	"github.com/fayca121/simplebank/gapi"
 	"github.com/fayca121/simplebank/pb"
 	"github.com/fayca121/simplebank/util"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	_ "github.com/lib/pq"
 	"github.com/rakyll/statik/fs"
@@ -32,6 +36,9 @@ func main() {
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
+	// run db migration
+	runDBMigration(config.MigrationUrl, config.DBSource)
+
 	store := db.NewStore(conn)
 	//runGinServer(config, store)
 	go runGatewayServer(config, store)
@@ -122,4 +129,16 @@ func runGatewayServer(config util.Config, store db.Store) {
 	if err != nil {
 		log.Fatal("cannot start http gateway server:", err)
 	}
+}
+
+func runDBMigration(migrationURL string, dbSource string) {
+	migration, err := migrate.New(migrationURL, dbSource)
+
+	if err != nil {
+		log.Fatal("cannot create new migrate instance")
+	}
+	if err = migration.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
+		log.Fatal("failed to run migrate up: ", err)
+	}
+	log.Println("DB migrated successfully")
 }

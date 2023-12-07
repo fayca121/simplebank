@@ -16,7 +16,7 @@ type Server struct {
 }
 
 func NewServer(config util.Config, store db.Store) (*Server, error) {
-	tokenMaker, err := token.NewJWTMaker(config.TokenSymmetricKey) // or token.NewPasetaMaker()
+	tokenMaker, err := token.NewPasetoMaker() // or .NewJWTMaker(config.TokenSymmetricKey)
 
 	if err != nil {
 		return nil, fmt.Errorf("cannot create token maker")

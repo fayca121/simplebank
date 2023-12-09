@@ -36,14 +36,14 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 		return nil, status.Errorf(codes.Unauthenticated, "incorrect password")
 	}
 
-	accessToken, accessPayload, err := server.tokenMaker.CreateToken(user.Username,
+	accessToken, accessPayload, err := server.tokenMaker.CreateToken(user.Username, util.Role(user.Role),
 		server.config.AccessTokenDuration)
 
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create access token")
 	}
 
-	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(user.Username,
+	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(user.Username, util.Role(user.Role),
 		server.config.RefreshTokenDuration)
 
 	if err != nil {

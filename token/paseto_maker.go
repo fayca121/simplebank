@@ -2,6 +2,7 @@ package token
 
 import (
 	"aidanwoods.dev/go-paseto"
+	"github.com/fayca121/simplebank/util"
 	"time"
 )
 
@@ -15,8 +16,8 @@ func NewPasetoMaker() (*PasetoMaker, error) {
 	}, nil
 }
 
-func (p *PasetoMaker) CreateToken(username string, duration time.Duration) (string, *Payload, error) {
-	payload, err := NewPayLoad(username, duration)
+func (p *PasetoMaker) CreateToken(username string, role util.Role, duration time.Duration) (string, *Payload, error) {
+	payload, err := NewPayLoad(username, role, duration)
 	if err != nil {
 		return "", nil, err
 	}
@@ -27,11 +28,9 @@ func (p *PasetoMaker) CreateToken(username string, duration time.Duration) (stri
 	token.SetIssuer(payload.Issuer)
 	token.SetIssuedAt(payload.IssuedAt)
 	token.SetExpiration(payload.ExpiredAt)
-	err = token.Set("ID", payload.ID)
+	token.SetString("ID", payload.ID)
+	token.SetString("role", payload.Role)
 
-	if err != nil {
-		return "", nil, err
-	}
 	encrypted := token.V4Encrypt(p.symmetricKey, nil)
 	return encrypted, payload, nil
 }
@@ -58,8 +57,12 @@ func (p *PasetoMaker) VerifyToken(token string) (*Payload, error) {
 	if err != nil {
 		return nil, err
 	}
-	var id string
-	err = verifiedToken.Get("ID", &id)
+	id, err := verifiedToken.GetString("ID")
+
+	if err != nil {
+		return nil, err
+	}
+	role, err := verifiedToken.GetString("role")
 
 	if err != nil {
 		return nil, err
@@ -67,6 +70,7 @@ func (p *PasetoMaker) VerifyToken(token string) (*Payload, error) {
 
 	return &Payload{
 		Issuer:    issuer,
+		Role:      role,
 		Username:  subject,
 		ExpiredAt: expiredAt,
 		IssuedAt:  issuedAt,

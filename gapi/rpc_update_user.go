@@ -22,7 +22,7 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	if err != nil {
 		return nil, status.Errorf(codes.PermissionDenied, "unauthorized: %s", err)
 	}
-	if payload.Username != req.Username {
+	if payload.Username != req.Username && payload.Role != util.BankerRole.String() {
 		return nil, status.Errorf(codes.PermissionDenied, "you cannot update other user's info")
 	}
 	//1- validate request

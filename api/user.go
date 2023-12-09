@@ -102,7 +102,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
-	accessToken, accessPayload, err := server.tokenMaker.CreateToken(user.Username,
+	accessToken, accessPayload, err := server.tokenMaker.CreateToken(user.Username, util.Role(user.Role),
 		server.config.AccessTokenDuration)
 
 	if err != nil {
@@ -110,7 +110,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		return
 	}
 
-	refreshToken, refreshTokenPayload, err := server.tokenMaker.CreateToken(user.Username,
+	refreshToken, refreshTokenPayload, err := server.tokenMaker.CreateToken(user.Username, util.Role(user.Role),
 		server.config.RefreshTokenDuration)
 
 	if err != nil {

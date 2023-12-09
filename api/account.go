@@ -5,6 +5,7 @@ import (
 	"errors"
 	db "github.com/fayca121/simplebank/db/sqlc"
 	"github.com/fayca121/simplebank/token"
+	"github.com/fayca121/simplebank/util"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -24,7 +25,7 @@ func (server *Server) createAccount(ctx *gin.Context) {
 
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 
-	if authPayload.Username != req.Owner {
+	if authPayload.Username != req.Owner && authPayload.Role != util.BankerRole.String() {
 		err := errors.New("you must create an account on your name")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
@@ -43,7 +44,7 @@ func (server *Server) createAccount(ctx *gin.Context) {
 			ctx.JSON(http.StatusForbidden, errorResponse(err))
 			return
 		}
-		
+
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}

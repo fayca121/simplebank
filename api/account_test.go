@@ -33,7 +33,7 @@ func TestGetAccountAPI(t *testing.T) {
 			name:      "OK",
 			accountId: account.ID,
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				generatedToken, payload, err := tokenMaker.CreateToken(user.Username, time.Minute)
+				generatedToken, payload, err := tokenMaker.CreateToken(user.Username, util.DepositorRole, time.Minute)
 				require.NoError(t, err)
 				require.NotEmpty(t, payload)
 				authorizationHeader := fmt.Sprintf("%s %s", authorizationTypeBearer, generatedToken)
@@ -54,7 +54,7 @@ func TestGetAccountAPI(t *testing.T) {
 			name:      "NotFound",
 			accountId: account.ID,
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				generatedToken, payload, err := tokenMaker.CreateToken(user.Username, time.Minute)
+				generatedToken, payload, err := tokenMaker.CreateToken(user.Username, util.DepositorRole, time.Minute)
 				require.NoError(t, err)
 				require.NotEmpty(t, payload)
 				authorizationHeader := fmt.Sprintf("%s %s", authorizationTypeBearer, generatedToken)
@@ -74,7 +74,7 @@ func TestGetAccountAPI(t *testing.T) {
 			name:      "InternalError",
 			accountId: account.ID,
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				generatedToken, payload, err := tokenMaker.CreateToken(user.Username, time.Minute)
+				generatedToken, payload, err := tokenMaker.CreateToken(user.Username, util.DepositorRole, time.Minute)
 				require.NoError(t, err)
 				require.NotEmpty(t, payload)
 				authorizationHeader := fmt.Sprintf("%s %s", authorizationTypeBearer, generatedToken)
@@ -94,7 +94,7 @@ func TestGetAccountAPI(t *testing.T) {
 			name:      "InvalidID",
 			accountId: 0,
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				generatedToken, payload, err := tokenMaker.CreateToken(user.Username, time.Minute)
+				generatedToken, payload, err := tokenMaker.CreateToken(user.Username, util.DepositorRole, time.Minute)
 				require.NoError(t, err)
 				require.NotEmpty(t, payload)
 				authorizationHeader := fmt.Sprintf("%s %s", authorizationTypeBearer, generatedToken)
@@ -113,7 +113,7 @@ func TestGetAccountAPI(t *testing.T) {
 			name:      "InvalidOwner",
 			accountId: account.ID,
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				generatedToken, payload, err := tokenMaker.CreateToken(util.RandomOwner(), time.Minute)
+				generatedToken, payload, err := tokenMaker.CreateToken(util.RandomOwner(), util.DepositorRole, time.Minute)
 				require.NoError(t, err)
 				require.NotEmpty(t, payload)
 				authorizationHeader := fmt.Sprintf("%s %s", authorizationTypeBearer, generatedToken)
@@ -171,7 +171,7 @@ func TestCreateAccountAPI(t *testing.T) {
 				Currency: account.Currency,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				generatedToken, payload, err := tokenMaker.CreateToken(user.Username, time.Minute)
+				generatedToken, payload, err := tokenMaker.CreateToken(user.Username, util.DepositorRole, time.Minute)
 				require.NoError(t, err)
 				require.NotEmpty(t, payload)
 				authorizationHeader := fmt.Sprintf("%s %s", authorizationTypeBearer, generatedToken)
@@ -199,7 +199,7 @@ func TestCreateAccountAPI(t *testing.T) {
 				Currency: account.Currency,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				generatedToken, payload, err := tokenMaker.CreateToken(user.Username, time.Minute)
+				generatedToken, payload, err := tokenMaker.CreateToken(user.Username, util.DepositorRole, time.Minute)
 				require.NoError(t, err)
 				require.NotEmpty(t, payload)
 				authorizationHeader := fmt.Sprintf("%s %s", authorizationTypeBearer, generatedToken)
@@ -227,7 +227,7 @@ func TestCreateAccountAPI(t *testing.T) {
 				Currency: "DA",
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				generatedToken, payload, err := tokenMaker.CreateToken(user.Username, time.Minute)
+				generatedToken, payload, err := tokenMaker.CreateToken(user.Username, util.DepositorRole, time.Minute)
 				require.NoError(t, err)
 				require.NotEmpty(t, payload)
 				authorizationHeader := fmt.Sprintf("%s %s", authorizationTypeBearer, generatedToken)
@@ -247,7 +247,7 @@ func TestCreateAccountAPI(t *testing.T) {
 				Currency: account.Currency,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				generatedToken, payload, err := tokenMaker.CreateToken(util.RandomOwner(), time.Minute)
+				generatedToken, payload, err := tokenMaker.CreateToken(util.RandomOwner(), util.DepositorRole, time.Minute)
 				require.NoError(t, err)
 				require.NotEmpty(t, payload)
 				authorizationHeader := fmt.Sprintf("%s %s", authorizationTypeBearer, generatedToken)

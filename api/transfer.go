@@ -6,6 +6,7 @@ import (
 	"fmt"
 	db "github.com/fayca121/simplebank/db/sqlc"
 	"github.com/fayca121/simplebank/token"
+	"github.com/fayca121/simplebank/util"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -33,7 +34,7 @@ func (server *Server) createTransfer(ctx *gin.Context) {
 
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 
-	if authPayload.Username != fromAccount.Owner {
+	if authPayload.Username != fromAccount.Owner && authPayload.Role != util.BankerRole.String() {
 		err := errors.New("")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return

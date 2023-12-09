@@ -36,6 +36,11 @@ tasks:
     cmds:
       - docker exec -it pgbank dropdb --username=postgres simple_bank
 
+  db_schema:
+    desc: "Generate db schema from dbml"
+    cmds:
+      - docker run --rm -v $(pwd)/doc:/app gitea.linuxcode.net/linuxcode/dbml-cli:latest dbml2sql --postgres -o schema.sql db.dbml
+
   sqlc:
     desc: "Generate go sql files"
     cmds:

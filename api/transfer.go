@@ -1,13 +1,13 @@
 package api
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	db "github.com/fayca121/simplebank/db/sqlc"
 	"github.com/fayca121/simplebank/token"
 	"github.com/fayca121/simplebank/util"
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5"
 	"net/http"
 )
 
@@ -62,7 +62,7 @@ func (server *Server) createTransfer(ctx *gin.Context) {
 func (server *Server) validAccount(ctx *gin.Context, accountID int64, currency string) (db.Account, bool) {
 	account, err := server.store.GetAccount(ctx, accountID)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, pgx.ErrNoRows) {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return account, false
 		}

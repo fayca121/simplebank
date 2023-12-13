@@ -1,12 +1,12 @@
 package api
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/fayca121/simplebank/util"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"net/http"
 	"time"
 )
@@ -43,7 +43,7 @@ func (server *Server) renewAccessToken(ctx *gin.Context) {
 	session, err := server.store.GetSession(ctx, id)
 
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(err, pgx.ErrNoRows) {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}

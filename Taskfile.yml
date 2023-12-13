@@ -17,7 +17,7 @@ tasks:
   postgres:
     desc: "Start postgres container"
     cmds:
-      - docker run -d --name pgbank -e POSTGRESQL_PASSWORD=rocks -p 5432:5432 bitnami/postgresql:15.4.0
+      - docker run -d --name pgbank -e POSTGRESQL_PASSWORD=rocks -e POSTGRESQL_DATABASE=simple_bank -p 5432:5432 bitnami/postgresql:15.4.0
 
   rmpostgres:
     desc: "Delete postgres container"
@@ -25,16 +25,6 @@ tasks:
     cmds:
       - docker stop pgbank
       - docker rm -v pgbank
-
-  createdb:
-    desc: "Create simple_bank database"
-    cmds:
-      - docker exec -it pgbank createdb --username=postgres --owner=postgres simple_bank
-
-  dropdb:
-    desc: "Drop simple_bank database"
-    cmds:
-      - docker exec -it pgbank dropdb --username=postgres simple_bank
 
   db_schema:
     desc: "Generate db schema from dbml"
